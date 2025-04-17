@@ -1,6 +1,6 @@
 import streamlit as st
 import pickle
-#import numpy as np
+import numpy as np
 
 # Load the saved model
 with open("titanic_predictor.sav", "rb") as file:
