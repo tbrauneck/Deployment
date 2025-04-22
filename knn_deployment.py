@@ -13,7 +13,6 @@ k=5
 # Define Genre as an empty list; it will be filled by user input
 Genre = []
 
-
 # Prepare a disctionay for the genre information of the movie from which we are building the prediction
 watched_movie_data = pd.DataFrame({
      'Biography': [0],
@@ -67,6 +66,9 @@ if Title in titles:
     row = titles.index(Title)
     genres = model_data.iloc[row].loc[['Biography','Drama','Thriller','Comedy','Crime','Mystery','History']]
     default_genre = genres[genres == 1].index.tolist()
+    k=6 # increase number of predictions, k, if title is in the training set; the title entered will be returned in the results and will be filtered out
+else:
+    k=5
 
 Genre = st.multiselect('What genre(s) is this movie?', list(watched_movie_data.keys()), default=default_genre)
     
@@ -84,8 +86,10 @@ if st.button("Get my recommendations"):
 
     #result = display(recommend_movies(watched_movie_data,k).style.hide(axis="index"))
     result = recommend_movies(watched_movie_data,k)
+    result = result[result['Movie Title']!= Title]
 
     # Renumber the index
+    result = result.reset_index(drop=True)
     result.index = result.index + 1
     st.write(f"Based on your selection, you may like:")
     st.dataframe(result)
