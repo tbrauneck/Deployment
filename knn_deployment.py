@@ -26,7 +26,8 @@ watched_movie_data = pd.DataFrame({
 })
 
 df = pd.read_csv(r"https://github.com/ArinB/MSBA-CA-Data/raw/main/CA05/movies_recommendation_data.csv")
-y = df.pop('Movie Name')
+model_data = df.sort_values(by='IMDB Rating', ascending=False) # sort the data by rating, highest first
+y = model_data.pop('Movie Name')
 titles = y.tolist()
 
 # Custom function to return the recommended movies based on the KNN model
@@ -41,7 +42,7 @@ def recommend_movies(watched_movie_data, n_recommendations=k):
     for i in range(len(distances.flatten())): # loop for each recommendation, i.e., k times
         movie_index = indices.flatten()[i] # Get the index of the movie
         movie_title = y.iloc[movie_index] # Find the index in the y dataframe to get the movie title
-        imdb_rating = df.iloc[movie_index]['IMDB Rating']
+        imdb_rating = model_data.iloc[movie_index]['IMDB Rating']
         recommendations.append((movie_title, f"{imdb_rating:.1f}"))
     
     # Sort recommendations by IMDb rating in descending order; we will show the most highly rated movies first
@@ -64,7 +65,7 @@ default_genre = []
 genres = []
 if Title in titles:
     row = titles.index(Title)
-    genres = df.iloc[row].loc[['Biography','Drama','Thriller','Comedy','Crime','Mystery','History']]
+    genres = model_data.iloc[row].loc[['Biography','Drama','Thriller','Comedy','Crime','Mystery','History']]
     default_genre = genres[genres == 1].index.tolist()
 
 Genre = st.multiselect('What genre(s) is this movie?', list(watched_movie_data.keys()), default=default_genre)
